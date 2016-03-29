@@ -16,3 +16,5 @@
 
 
 #endif // ALL_H_INCLUDED
+
+// aggiunto un commento di prova
