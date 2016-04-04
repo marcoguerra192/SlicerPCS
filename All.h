@@ -2,7 +2,7 @@
 #define ALL_H_INCLUDED
 
 #include "Standard.h" //Inclusione Header standard del C
-#include "Time.h"
+//#include "Time.h" // non è chiaro a che cosa serva
 
 #include "Tipi.h"  // Inclusione Header dell'utente
 #include "Strutture.h"

@@ -15,7 +15,7 @@
     #include <windows.h>
 #else
     #ifdef __linux__
-        #include <linux.h> // Inclusione della libreria linux
+        // #include <linux> // Inclusione della libreria linux (superfluo, sta tutto in stdlib
     #endif
 #endif
 

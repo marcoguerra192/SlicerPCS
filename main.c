@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     if (load_data("dati_punti.txt") != 0)
     {
         fprintf(OUTPUT, "Errore punti");
-        getchar();
+            getchar();
         return 1;
     }
     if(load_edges("dati_lati.txt")!= 0){

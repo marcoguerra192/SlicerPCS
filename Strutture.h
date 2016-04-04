@@ -60,9 +60,9 @@ long NUMPIANI;
     #define PLOT_RESULT_COMM "MATLAB -nodisplay -nosplash -nodesktop -r run('.\\Risultato.m');"
 #else
     #ifdef __linux__ // se compili sotto linux
-        #define PLOT_RESULT_COMM "echo "Trova il dannato comando";"
+        #define PLOT_RESULT_COMM "echo \"Trova il dannato comando \";"
     #else
-        #define PLOT_RESULT_COMM "echo "Impossibile determinare il sistema operativo";"
+        #define PLOT_RESULT_COMM "echo \" Impossibile determinare il sistema operativo \" ;"
     #endif
 #endif
 
@@ -76,7 +76,7 @@ short PREPRINT;
 // STRINGA HELP
 #define HELP "Sintassi: .\\Progetto.exe [<N di Piani>] [<Tolleranza>] [ab] \n> \
  \n  a = 1 : Stampa in formato grafico con MATLAB - a = 0 : Stampa in formato testo su file \n \
- \n  b= 1 : Stampa il solido prima del run - b = 0 : Stampa solo alla fine (Stampa secondo la modalità b \n"
+ \n  b = 1 : Stampa il solido prima del run - b = 0 : Stampa solo alla fine (Stampa secondo la modalita' a) \n"
 
 // NOME FILE PER IL RISULTATO
 #define RESULT "Risultato.m"
