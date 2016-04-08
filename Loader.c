@@ -17,7 +17,6 @@
 Point* fetch_point(int);
 Seg* fetch_seg(int);
 
-
 int load_data(char* filename) // carica punti
 /*
     FUNZIONE che carica in memoria la struttura dati dei PUNTI da un file di nome filename
