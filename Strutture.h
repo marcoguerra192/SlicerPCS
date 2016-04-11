@@ -60,11 +60,13 @@ long NUMPIANI;
     #define PLOT_RESULT_COMM "MATLAB -nodisplay -nosplash -nodesktop -r run('.\\Risultato.m');"
 #else
     #ifdef __linux__ // se compili sotto linux
-        #define PLOT_RESULT_COMM "echo \"Trova il dannato comando \";"
+        #define PLOT_RESULT_COMM "matlab -nojvm < ./Risultato.m"
     #else
         #define PLOT_RESULT_COMM "echo \" Impossibile determinare il sistema operativo \" ;"
     #endif
 #endif
+
+#define PLOT_RESULT_COMM "matlab -nojvm < ./Risultato.m" // Non riesco a trovare la macro __linux__, quindi la definisco hard-coded per linux in attesa di risolvere
 
 // OPZIONI varie per la generazione di piani random/fissa da file, stampa in modalità grafica/testuale, stampa del solido prima del run
 
