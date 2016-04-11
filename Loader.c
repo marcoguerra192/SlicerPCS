@@ -369,7 +369,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
     SegCurs->orient = ori;
     SegCurs->next = NULL;
 
-    while (( ch != '\n' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia FUORI
+    while (( ch != '\r' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia FUORI
     {
         SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
         SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
@@ -449,7 +449,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         SegCurs->orient = ori;
         SegCurs->next = NULL;
 
-        while ((ch != '\n' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia DENTRO
+        while ((ch != '\r' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia DENTRO
         {
             SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
             SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
