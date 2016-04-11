@@ -42,6 +42,8 @@ int Stampa()
         SgCurs = SgCurs->next;
     }
 
+    fprintf(file_stream, "pause; \n"); // modifica per LINUX per non far chiudere il programma alla fine!
+
     fclose(file_stream);
 
     system(PLOT_RESULT_COMM);
