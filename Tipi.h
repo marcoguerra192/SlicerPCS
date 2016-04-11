@@ -61,7 +61,7 @@ dichiarare variabili di questo tipo, NON Seg_List*, se no c'è un puntatore di tr
                         // FINE SEGMENTI
 
 
-// FACCE
+// FACCE  *** ANDRA' MODIFICATO IL TIPO FACCE COSI'DA AGGIUNGERE I MARKER PER LE NUOVE INFORMAZIONI ***
 typedef struct face {  // Definizione del tipo di dato Faccia
 struct seg_pointerlist_el* s; // Lista di segmenti. L'ultimo elemento punta a NULL, per capire quando la lista finisce
                       // Contiene già la lista di char per l'orientamento, '+' concorde, '-' discorde.
