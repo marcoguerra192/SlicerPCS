@@ -11,7 +11,7 @@
 #include "Stampa.h"
 
 
-int solid_chopper(Solid_List s, Plane_List p)
+int solid_chopper(Solid_List s, Plane_List p, unsigned long PlIndex)
 {
     Face_PointerList faceCurs;
     Seg_PointerList segCurs;
@@ -257,6 +257,11 @@ int solid_chopper(Solid_List s, Plane_List p)
     newFace.s = tmpListSegHead; // assegno la lista di segmenti, che ora è ordinata, adiacente e antioraria rispetto al vettore normale
     newFace.side = 0;
 
+    // assegno i MARKER DELLA FRATTURA alla faccia nuova!
+
+    newFace.OriginalFace = 0; // marker faccia originale
+    newFace.CausingPlane = (unsigned int) 0; // marker piano di giacitura
+
     Face_add_head(newFace,Fc,&Fc); // aggiungo la nuova faccia in testa alla lista
     NUMFACCE++;
 
@@ -345,10 +350,12 @@ int solid_chopper(Solid_List s, Plane_List p)
 
 int chop_solids(Solid_List S, Plane_List p)
 {
+    unsigned long ind = 1; // Indice dei piani che tagliano
+
     while (S != NULL)
     {
-        solid_chopper(S,p);
-
+        solid_chopper(S,p,ind);
+        ind++;
         S = S->next;
     }
 

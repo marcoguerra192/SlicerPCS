@@ -21,6 +21,9 @@ int face_slicer(Face_List silvia)
     char flag_cons = 0; //flag: 0 spento, 1 acceso
     char original_orient; // char dell'orientamento nel primo solido
 
+    unsigned int OrigFace; // marker per propagare l'info sul marker di quale faccia originale ha originato la corrente.
+    unsigned long CausePlane; // marker per propagare l'info su quale piano ha originato la faccia corrente.
+
     if ( silvia ->F.side == 0) // controlla il flag se non devi operare
     {
         #ifdef DEBUG_H
@@ -37,6 +40,9 @@ int face_slicer(Face_List silvia)
         }
         return 1;
     }
+
+    OrigFace = silvia->F.OriginalFace; // assegna marker faccia originale.
+    CausePlane = silvia->F.CausingPlane; // assegna marker piano di giacitura.
 
     tmpS = silvia->F.s;
     // primo caso fuori
@@ -165,7 +171,11 @@ int face_slicer(Face_List silvia)
     Seg_add_head(newSeg, Sg, &Sg); // aggiungi il nuovo segmento in testa alla lista di Sg
     NUMSEG++;
 
-    // ora creo le facce nuove
+    // Assegno i marker delle fratture alla faccia nuova
+    newFace.OriginalFace = OrigFace;
+    newFace.CausingPlane = CausePlane;
+
+    // ora "creo" le facce nuove
     Face_add_head(newFace, Fc, &Fc); // aggiungo la nuova faccia in testa alla lista
 
 

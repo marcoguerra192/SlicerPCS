@@ -70,6 +70,12 @@ struct seg_pointerlist_el* s; // Lista di segmenti. L'ultimo elemento punta a NU
    Point norm_vect; // Vettore normale alla faccia (campo "char" non utilizzato)
    struct solid* Sol1;   //  Puntatori ai due solidi (eventualmente uno NULL) che sono delimitati da quella faccia
    struct solid* Sol2;
+
+   unsigned int OriginalFace; // Marker che indica se la faccia è figlia di una delle facce originali, e se sì quale da 1 a n.
+                              // Altrimenti 0 per indicare una faccia interna al dominio.
+   unsigned long CausingPlane; // Marker che indica quale piano ha originato la faccia, ovvero su quale frattura il piano giace, da 1 a n.
+                               // Altrimenti 0 per indicare che la faccia discende da una di quelle originali.
+
 } Face;
 
 // Definizione LISTA di FACCE

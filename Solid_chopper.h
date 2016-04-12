@@ -7,7 +7,7 @@
 #ifndef SOLID_CHOPPER_H_INCLUDED
 #define SOLID_CHOPPER_H_INCLUDED
 
-int solid_chopper(Solid_List, Plane_List );
+int solid_chopper(Solid_List, Plane_List, unsigned long );
 
 int chop_solids(Solid_List, Plane_List);
 

@@ -326,6 +326,8 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 
     NUMFACCE = 0;
 
+    unsigned int MarkerFaccia; // Marker per segnare le facce originali
+
 	if (filename == NULL)  // verifica che il parametro sia buono
      {
          #ifdef DEBUG_H
@@ -377,6 +379,26 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         SegCurs->next->next = NULL; //termino lista
         SegCurs = SegCurs->next;
     }
+
+    // Ora dalla riga successiva leggo IL MARKER DELLA FACCIA!
+
+    if (fscanf(loader_stream,"%d%c",&MarkerFaccia,&ch) != 2)
+    {
+        #ifdef DEBUG_H
+        fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
+        #endif
+        return -1;
+    }
+
+    // assegno il marker letto alla faccia corrente
+    f->F.OriginalFace = MarkerFaccia;
+    // Fine assegnazione marker faccia originale
+
+    // Tutte le facce originali sono generate (formalmente) dal piano 0, dunque assegno marker CausingPlane 0
+    f->F.CausingPlane = (unsigned long) 0;
+    // Fine assegnazione marker piano generatore
+
+
     // adesso calcoliamo la normale
 
     vett1.x = f->F.s->sptr->B->x - f->F.s->sptr->A->x; // creo un primo vettore

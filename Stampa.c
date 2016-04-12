@@ -229,6 +229,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
                 fprintf(DEST,"%p %c ", cursSegpointer->sptr , cursSegpointer->orient );
                 cursSegpointer=cursSegpointer->next;
             }
+            fprintf(DEST, "OriginalFace: %d - CuttingPlane: %ld ", cursface->F.OriginalFace, cursface->F.CausingPlane);
             fprintf(DEST,"\n");
             cursface=cursface->next;
     }
