@@ -13,6 +13,8 @@
 #include "Operazioni_Liste.h" // Includo le operazioni su liste e quelle vettoriali
 #include "time.h"
 
+#define DEBUG_H
+
 //prototipi
 Point* fetch_point(int);
 Seg* fetch_seg(int);
@@ -312,8 +314,12 @@ Point* fetch_point(int n)
 }
 
 int load_faces(char* filename)
-/* Funzione che prende un file di righe di interi, ciascuna riferentesi ad una faccia, con ciascun intero riferentesi all'indice del segmento
-nella lista di segmenti, e ognuna terminata da un carattere -1
+/* Nella nuova implementazione la sintassi del file delle facce dev'essere la seguente:
+Una riga composta da <numero><+/->< spazio> ripetuto per ogni segmento della faccia, fino all'ultimo nella forma <numero><+/-><!>
+Quindi a capo (\n o \r).
+Poi una riga con un solo numero, indicante il marker della faccia. I MARKER NON POSSONO PARTIRE DA 0, MA DEVONO PARTIRE DA 1
+Ripetere per ogni faccia.
+Infine una riga con un solo punto esclamativo.
 Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento */
 {
     FILE* loader_stream;   // Dichiara il file stream
@@ -322,6 +328,8 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 	Face_PointerList tmpFace;
 	int tmpnum = 0;
 	char ch, ori;
+	char* line = (char*) malloc(200*sizeof(char)); // riga del file
+	FILE* line_stream; // stream per scorrere la riga
 	Point vett1, vett2, norm; // vettori per calcolare la normale
 
     NUMFACCE = 0;
@@ -366,12 +374,23 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
     f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
     SegCurs = f->F.s; // assegno il cursore
 
-    fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch);
+    fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
+    if ( line[0] == '!' || line[0]=='\r' || line[0]=='\n' || line[0]=='\0') // file vuoto
+    {
+        #ifdef DEBUG_H
+        fprintf(OUTPUT, "Load_Faces: Il file non contiene facce");
+        #endif
+        return -1;
+    }
+
+    line_stream = fmemopen(line, strlen(line),"r"); // converti la stringa letta in un buffer
+
+    fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch);
     SegCurs->sptr = fetch_seg(tmpnum);
     SegCurs->orient = ori;
     SegCurs->next = NULL;
 
-    while (( ch != '\r' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia FUORI
+    while (( ch != '!' && fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia FUORI
     {
         SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
         SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
@@ -382,7 +401,10 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 
     // Ora dalla riga successiva leggo IL MARKER DELLA FACCIA!
 
-    if (fscanf(loader_stream,"%d%c",&MarkerFaccia,&ch) != 2)
+    fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
+
+    MarkerFaccia = atoi(line);
+    if (MarkerFaccia == 0)
     {
         #ifdef DEBUG_H
         fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
@@ -461,17 +483,32 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
      {
         /* Qui dentro scriviamo le stesse istruzioni ma allocando i nuovi elementi della lista*/
 
+        fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
+
+
+        if (line[0]=='!' || line[0]=='\n' || line[0]=='\r' || line[0]=='\0') // se la riga è vuota
+        {
+            #ifdef DEBUG_H
+            fprintf(OUTPUT, "Load_Faces: Riga vuota, uscita.");
+            #endif
+            return 0;
+        }
+
+        line_stream = fmemopen(line, strlen(line),"r"); // converti la stringa in un buffer
+
+        fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch);
+
         f->next=(Face_List)malloc(sizeof(Face_List_El));
         f=f->next;
         f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));;
         SegCurs = f->F.s;
-        fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch);
+
 
         SegCurs->sptr = fetch_seg(tmpnum);
         SegCurs->orient = ori;
         SegCurs->next = NULL;
 
-        while ((ch != '\r' && fscanf(loader_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia DENTRO
+        while ((ch != '!' && fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia DENTRO
         {
             SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
             SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
@@ -482,7 +519,10 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 
         // Ora dalla riga successiva leggo IL MARKER DELLA FACCIA!
 
-        if (fscanf(loader_stream,"%d%c",&MarkerFaccia,&ch) != 2)
+        fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
+
+        MarkerFaccia = atoi(line);
+        if (MarkerFaccia == 0)
         {
             #ifdef DEBUG_H
             fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
