@@ -14,5 +14,4 @@
 #include "Solid_chopper.h"
 #include "Stampa.h"
 
-
 #endif // ALL_H_INCLUDED

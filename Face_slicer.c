@@ -8,6 +8,9 @@
 #include "Operazioni_Liste.h"
 #include "Strutture.h"
 
+
+#define DEBUG_H
+
 int face_slicer(Face_List silvia)
 {
     Seg_PointerList tmpS, tmpSold; // cursore temporaneo per scorrere i segmenti della faccia
@@ -337,6 +340,13 @@ int classifica_faccia(Face_List Fp)
     while (segCurs->sptr->A->side == '0' && segCurs->sptr->B->side == '0')
     {
         segCurs = segCurs->next;
+        #ifdef DEBUG_H
+        if (segCurs == NULL)
+        {
+            fprintf(OUTPUT,"Classifica_Faccia: Errore, tutti segmenti della faccia giacciono sul piano!");
+            return -1;
+        }
+        #endif
     }
     if(segCurs==NULL){
         Fp->F.side=0;
