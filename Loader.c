@@ -489,7 +489,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         if (line[0]=='!' || line[0]=='\n' || line[0]=='\r' || line[0]=='\0') // se la riga è vuota
         {
             #ifdef DEBUG_H
-            fprintf(OUTPUT, "Load_Faces: Riga vuota, uscita.");
+            fprintf(OUTPUT, "Load_Faces: Riga vuota, uscita. \n");
             #endif
             return 0;
         }
@@ -671,6 +671,8 @@ int load_solid()
 
 
 int load_planes(char* filename)
+/* IMPORTANTE La fine del file va segnalata con una riga che contenga il solo carattere '!'
+*/
 {
     FILE* loader_stream;
     char* str;
@@ -730,6 +732,14 @@ int load_planes(char* filename)
         return -1;
     }
 
+    if (str[0] == '!') // segnale di fine file
+    {
+        #ifdef DEBUG_H
+        fprintf(OUTPUT,"Load_Planes: Il file è formattato correttamente, ma non contiene piani! Uscita \n");
+        #endif // DEBUG_h
+        return 1;
+    }
+
     if (sscanf(str,"%lf %lf %lf %lf %lf %lf", &n[0], &n[1], &n[2], &n[3], &n[4], &n[5]) != 6)
     {
         fprintf(OUTPUT,"Load_Planes: non ho letto 6 double");
@@ -752,7 +762,16 @@ int load_planes(char* filename)
 
     NUMPIANI++;
 
-    while(!feof(loader_stream))
+    Pl->next = NULL; // segno la fine della lista dei piani, poi nel caso andrò avanti
+
+    fgets(str,80,loader_stream);
+    if (str == NULL)
+        {
+            fprintf(OUTPUT, "Load_Planes: Impossibile leggere una riga dal file \n");
+            return -1;
+        }
+
+    while(str[0] != '!') // procedi fino alla fine del file
     {
         p->next = (Plane_List) malloc (sizeof(Plane_List_El));
         if (p == NULL)
@@ -761,12 +780,6 @@ int load_planes(char* filename)
             return -1;
         }
 
-        fgets(str,80,loader_stream);
-        if (str == NULL)
-        {
-            fprintf(OUTPUT, "Load_Planes: Non ho letto una riga dal file \n");
-            return -1;
-        }
 
         if (sscanf(str,"%lf %lf %lf %lf %lf %lf", &n[0], &n[1], &n[2], &n[3], &n[4], &n[5]) != 6)
         {
@@ -794,7 +807,14 @@ int load_planes(char* filename)
 
         p = p->next;
 
-    }
+        fgets(str,80,loader_stream);
+        if (str == NULL)
+        {
+            fprintf(OUTPUT, "Load_Planes: Impossibile leggere una riga dal file \n");
+            return -1;
+        }
+
+    } // fine ciclo sulle righe
 
 
 

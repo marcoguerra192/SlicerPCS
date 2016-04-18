@@ -139,7 +139,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    fprintf(OUTPUT, "Loaded! ");
+    fprintf(OUTPUT, "Loaded! \n");
     if (PREPRINT) // pre print
     {
         fprintf(OUTPUT, "Pre-stampa:  ");
@@ -149,7 +149,7 @@ int main(int argc, char** argv)
         }
         else
         {
-            print_all(0);
+            new_print_all(0);
         }
 
         getchar();
@@ -157,6 +157,7 @@ int main(int argc, char** argv)
 
     fprintf(OUTPUT,"\n\n\n\n           *           *          *\n");
     PlCurs=Pl;
+
     while (PlCurs!=NULL){
 
         shred();
