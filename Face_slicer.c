@@ -174,13 +174,11 @@ int face_slicer(Face_List silvia)
     Seg_add_head(newSeg, Sg, &Sg); // aggiungi il nuovo segmento in testa alla lista di Sg
     NUMSEG++;
 
-    // Assegno i marker delle fratture alla faccia nuova
-    newFace.OriginalFace = OrigFace;
-    newFace.CausingPlane = CausePlane;
-
     // ora "creo" le facce nuove
     Face_add_head(newFace, Fc, &Fc); // aggiungo la nuova faccia in testa alla lista
 
+    Fc->F.OriginalFace = OrigFace; // aggiungo i marker della faccia originale e del piano tagliante
+    Fc->F.CausingPlane = CausePlane; // la nuova faccia dovrebbe essere in testa alla lista!
 
     if(!primo){
         newTail = tmpS; // salvo la lista della seconda parte della faccia, da P2

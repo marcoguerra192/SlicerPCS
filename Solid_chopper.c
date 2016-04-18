@@ -257,13 +257,12 @@ int solid_chopper(Solid_List s, Plane_List p, unsigned long PlIndex)
     newFace.s = tmpListSegHead; // assegno la lista di segmenti, che ora è ordinata, adiacente e antioraria rispetto al vettore normale
     newFace.side = 0;
 
-    // assegno i MARKER DELLA FRATTURA alla faccia nuova!
-
-    newFace.OriginalFace = 0; // marker faccia originale
-    newFace.CausingPlane = (unsigned int) 0; // marker piano di giacitura
-
     Face_add_head(newFace,Fc,&Fc); // aggiungo la nuova faccia in testa alla lista
     NUMFACCE++;
+
+    // assegno i MARKER DELLA FRATTURA alla faccia nuova! La faccia nuova è in testa alla lista!
+    Fc->F.OriginalFace = 0; // marker faccia originale (non è una faccia iniziale!)
+    Fc->F.CausingPlane = PlIndex; // marker piano di giacitura (passato come argomento)
 
     //ai segmenti della faccia nuova devo aggiungere la faccia in head nella propria face_pointerlist f
 
@@ -350,7 +349,7 @@ int solid_chopper(Solid_List s, Plane_List p, unsigned long PlIndex)
 
 int chop_solids(Solid_List S, Plane_List p)
 {
-    unsigned long ind = 1; // Indice dei piani che tagliano
+    unsigned long ind = 1; // Indice dei piani che tagliano. DEVE PARTIRE DA 1, 0 è il marker delle facce originali
 
     while (S != NULL)
     {
