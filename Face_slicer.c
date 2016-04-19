@@ -9,7 +9,7 @@
 #include "Strutture.h"
 
 
-#define DEBUG_H
+//#define DEBUG_H
 
 int face_slicer(Face_List silvia)
 {

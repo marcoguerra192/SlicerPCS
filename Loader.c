@@ -13,8 +13,6 @@
 #include "Operazioni_Liste.h" // Includo le operazioni su liste e quelle vettoriali
 #include "time.h"
 
-#define DEBUG_H
-
 //prototipi
 Point* fetch_point(int);
 Seg* fetch_seg(int);

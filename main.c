@@ -7,6 +7,8 @@ int main(int argc, char** argv)
 {
     Plane_List PlCurs;
     int n_piani = 0;
+    unsigned long PlInd = 1; // Indice dei piani per il marker CausingPlane
+                             // DEVE PARTIRE DA 1! (0 è il marker delle facce originali)
     tol = 0;
     RANDOMIZE = 1; // default
     GRAPHIC = 1;
@@ -164,29 +166,40 @@ int main(int argc, char** argv)
 
         classifica(PlCurs->pl);
 
-        //controllo_errori();
+        #ifdef DEBUG_H
+        controllo_errori();
+        #endif
 
         splitting_segs(Sg, PlCurs->pl);
 
-        //controllo_errori();
+        #ifdef DEBUG_H
+        controllo_errori();
+        #endif
 
         slice_faces(Fc);
 
-        //controllo_errori();
+        #ifdef DEBUG_H
+        controllo_errori();
+        #endif
 
-        chop_solids(Sol, PlCurs);
+        chop_solids(Sol, PlCurs, PlInd);
 
-        //controllo_errori();
+        #ifdef DEBUG_H
+        controllo_errori();
+        #endif
 
 
-        PlCurs=PlCurs->next;
+        PlCurs=PlCurs->next; // Scorri avanti il cursore dei piani
+        PlInd++; // Incrementa l'indice dei piani!
     }
 
     fprintf(OUTPUT, "\n\n\n\n______________________________________________________"
 
             "\nDone! \n");
 
+    #ifdef DEBUG_H
     controllo_errori();
+    #endif
 
     if (GRAPHIC)
     {

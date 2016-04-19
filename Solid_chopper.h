@@ -9,6 +9,6 @@
 
 int solid_chopper(Solid_List, Plane_List, unsigned long );
 
-int chop_solids(Solid_List, Plane_List);
+int chop_solids(Solid_List, Plane_List, unsigned long);
 
 #endif // SOLID_CHOPPER_H_INCLUDED

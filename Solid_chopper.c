@@ -347,14 +347,13 @@ int solid_chopper(Solid_List s, Plane_List p, unsigned long PlIndex)
 }
 
 
-int chop_solids(Solid_List S, Plane_List p)
+int chop_solids(Solid_List S, Plane_List p, unsigned long PlInd)
 {
-    unsigned long ind = 1; // Indice dei piani che tagliano. DEVE PARTIRE DA 1, 0 è il marker delle facce originali
+    // L'indice dei piani che tagliano. DEVE PARTIRE DA 1, 0 è il marker delle facce originali
 
     while (S != NULL)
     {
-        solid_chopper(S,p,ind);
-        ind++;
+        solid_chopper(S,p,PlInd);
         S = S->next;
     }
 
