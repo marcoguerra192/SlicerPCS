@@ -331,6 +331,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 	Point vett1, vett2, norm; // vettori per calcolare la normale
 
     NUMFACCE = 0;
+    NUMFACCE_ORIG = 0;
 
     unsigned int MarkerFaccia; // Marker per segnare le facce originali
 
@@ -408,6 +409,11 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
         #endif
         return -1;
+    }
+
+    if (MarkerFaccia > NUMFACCE_ORIG) // aggiorno il contatore delle facce originali per saperne il numero nel main
+    {
+        NUMFACCE_ORIG = MarkerFaccia;
     }
 
     // assegno il marker letto alla faccia corrente

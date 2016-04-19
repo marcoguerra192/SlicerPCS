@@ -47,12 +47,13 @@ double tol; // double per l'asegnazione della TOLLERANZA.
 #define OUTPUT stdout
 
 
-// Contatori dei pt, seg, facce e sol
+// Contatori dei pt, seg, facce, sol e facce originali
 long NUMPUNTI;
 long NUMSEG;
 long NUMFACCE;
 long NUMSOL;
 long NUMPIANI;
+long NUMFACCE_ORIG;
 
 // Comandi shell per la stampa del risultato su MATLAB/Octave
 
@@ -82,6 +83,13 @@ short PREPRINT;
 
 // NOME FILE PER IL RISULTATO
 #define RESULT "Risultato.m"
+
+
+// STRUTTURE DATI PER IL RETRO LINK FRA FACCE ORIGINALI E FACCE FINALI, E FRA FRATTURE E FACCE FINALI
+
+Face_PointerList* FigliOriginali ; // vettore di Face_PointerList, k-esimo elemento è la lista di facce discendenti dalla faccia originale k.
+
+Face_PointerList* GeneratiFrattura ; // vettore di Face_PointerList, k-esimo elemento è la lista facce generate dal k-esimo piano.
 
 
 #endif // STRUTTURE_H_INCLUDED

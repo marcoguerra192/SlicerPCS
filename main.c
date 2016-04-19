@@ -6,7 +6,9 @@
 int main(int argc, char** argv)
 {
     Plane_List PlCurs;
+    Face_List FcCurs;
     int n_piani = 0;
+    long cursore = 0;
     unsigned long PlInd = 1; // Indice dei piani per il marker CausingPlane
                              // DEVE PARTIRE DA 1! (0 è il marker delle facce originali)
     tol = 0;
@@ -192,6 +194,52 @@ int main(int argc, char** argv)
         PlCurs=PlCurs->next; // Scorri avanti il cursore dei piani
         PlInd++; // Incrementa l'indice dei piani!
     }
+
+    // POST PROCESSING delle strutture per generare il retro-link: quali facce derivano dalle originali e quali da ogni frattura.
+
+    FigliOriginali = (Face_PointerList*) malloc(NUMFACCE_ORIG * sizeof(Face_PointerList)); // alloco il vettore facce da k° faccia originale
+    GeneratiFrattura = (Face_PointerList*) malloc(NUMPIANI * sizeof(Face_PointerList)); // alloco il vettore di facce da k° frattura
+
+    for (cursore=0 ; cursore < NUMFACCE_ORIG ; cursore++) // inizializzo i puntatori a NULL
+    {
+        FigliOriginali[cursore] = NULL;
+    }
+
+    for (cursore=0 ; cursore < NUMPIANI ; cursore++) // inizializzo i puntatori a NULL
+    {
+        GeneratiFrattura[cursore] = NULL;
+    }
+
+    // scorro le facce e assegno
+
+    FcCurs = Fc; // assegno a testa della lista
+
+    while (FcCurs != NULL)
+    {
+        Face_List tmp; // segnaposto temporaneo per aggiunta in testa
+        unsigned int OriFace = FcCurs->F.OriginalFace;
+        unsigned long CausePl = FcCurs->F.CausingPlane;
+
+        if (OriFace != 0) // se è una faccia originale aggiungo in testa alla lista del k-esimo elemento
+        {
+            tmp = FigliOriginali[OriFace - 1];
+            FigliOriginali[OriFace - 1] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
+            FigliOriginali[OriFace - 1]->fptr = &(FcCurs->F);
+            FigliOriginali[OriFace - 1]->next = tmp;
+        }
+
+        if (CausePl != 0) // se è provocato da una frattura aggiungo in testa alla lista del k-esimo piano
+        {
+            tmp = GeneratiFrattura[CausePl-1];
+            GeneratiFrattura[CausePl-1] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
+            GeneratiFrattura[CausePl-1]->fptr = &(FcCurs->F);
+            GeneratiFrattura[CausePl-1]->next = tmp;
+        }
+
+        FcCurs = FcCurs->next;
+    } // fine ciclo sulle facce
+
+    // FINE POST PROCESSING
 
     fprintf(OUTPUT, "\n\n\n\n______________________________________________________"
 

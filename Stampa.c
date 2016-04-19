@@ -187,6 +187,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     Solid_List cursSolid;
     Seg_PointerList cursSegpointer;
     Face_PointerList cursFacepointer;
+    int i = 0;
 
     FILE* DEST;
     if (dest == 0)
@@ -246,6 +247,33 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             fprintf(DEST,"\n");
             cursSolid=cursSolid->next;
             }
+
+    fprintf(DEST,"\nFacce derivate dalle originali:\n");
+    for (i=0 ; i < NUMFACCE_ORIG ; i++)
+    {
+        cursf = FigliOriginali[i];
+        fprintf(DEST, "Marker %d - Facce :",i+1);
+        while (cursf != NULL)
+        {
+            fprintf(DEST, " %p" , cursf->fptr);
+            cursf = cursf->next;
+        }
+        fprintf(DEST, "\n");
+    }
+
+    fprintf(DEST,"\nFacce generate dal piano k-esimo:\n");
+    for (i=0 ; i < NUMPIANI ; i++)
+    {
+        cursf = GeneratiFrattura[i];
+        fprintf(DEST, "Frattura %d - Facce :",i+1);
+        while (cursf != NULL)
+        {
+            fprintf(DEST, " %p" , cursf->fptr);
+            cursf = cursf->next;
+        }
+        fprintf(DEST, "\n");
+    }
+
     }
 
     void controllo_errori(){
