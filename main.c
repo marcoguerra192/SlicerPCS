@@ -328,7 +328,9 @@ int main(int argc, char** argv)
     }
     else
     {
-        new_print_all(1);
+        // new_print_all(1); //Invece che questa utilizziamo la funzione nuova che stampa gli indici.
+        // in futuro lasciamo la scelta con un parametro a riga di comando ( potenzialmente implementare tutto come una function. )
+        print_all_with_indexes(1);
     }
 
 
