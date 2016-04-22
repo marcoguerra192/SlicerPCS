@@ -5,8 +5,12 @@
 
 int main(int argc, char** argv)
 {
+    Point_List PtCurs; // cursori vari
+    Seg_List SgCurs;
     Plane_List PlCurs;
     Face_List FcCurs;
+    Solid_List SoCurs;
+
     int n_piani = 0;
     long cursore = 0;
     unsigned long PlInd = 1; // Indice dei piani per il marker CausingPlane
@@ -160,6 +164,10 @@ int main(int argc, char** argv)
     }
 
     fprintf(OUTPUT,"\n\n\n\n           *           *          *\n");
+
+    /* ------------------------------------------------------------------------------------------------- */
+    // RUN
+
     PlCurs=Pl;
 
     while (PlCurs!=NULL){
@@ -193,7 +201,10 @@ int main(int argc, char** argv)
 
         PlCurs=PlCurs->next; // Scorri avanti il cursore dei piani
         PlInd++; // Incrementa l'indice dei piani!
-    }
+    } // fine ciclo di esecuzione del da bomb
+
+/* ----------------------------------------------------------------------------------------------- */
+
 
     // POST PROCESSING delle strutture per generare il retro-link: quali facce derivano dalle originali e quali da ogni frattura.
 
@@ -240,6 +251,68 @@ int main(int argc, char** argv)
     } // fine ciclo sulle facce
 
     // FINE POST PROCESSING
+
+/* ------------------------------------------------------------------------------------------------------*/
+
+    // ESEGUO L'ASSEGNAZIONE DEGLI INDICI NUMERICI!
+
+    //Punti
+    cursore = 1; // inizializzo l'indice (DEVE PARTIRE DA 1!)
+    PtCurs = Pt; // assegno cursore all'inizio lista
+    while (PtCurs != NULL)
+    {
+        PtCurs->P.indice = cursore; // assegno
+
+        cursore++;
+        PtCurs = PtCurs->next;
+    } // fine while sui pt
+
+    cursore = 1; // inizializzo di nuovo
+    SgCurs = Sg; // cursore a inizio lista
+    while (SgCurs != NULL)
+    {
+        SgCurs->S.indice = cursore; // assegno
+
+        cursore++;
+        SgCurs = SgCurs->next;
+    } // fine while sui seg
+
+    cursore = 1;
+    FcCurs = Fc;
+    while (FcCurs != NULL)
+    {
+        FcCurs->F.indice = cursore; // assegno
+
+        cursore++;
+        FcCurs = FcCurs->next;
+    } // fine while sulle facce
+
+    cursore = 1;
+    SoCurs = Sol;
+    while (SoCurs != NULL)
+    {
+        SoCurs->So.indice = cursore; // assegno
+
+        cursore++;
+        SoCurs = SoCurs->next;
+    } // fine while solidi
+
+    cursore = 1;
+    PlCurs = Pl;
+    while (PlCurs != NULL)
+    {
+        PlCurs->pl.indice = cursore; // assegno
+
+        cursore++;
+        PlCurs = PlCurs->next;
+    } // fine while sui piani
+
+
+    // FINE CREAZIONE INDICI NUMERICI
+
+    /* -------------------------------------------------------------------------------------------------- */
+
+    // STAMPA DEL RISULTATO
 
     fprintf(OUTPUT, "\n\n\n\n______________________________________________________"
 

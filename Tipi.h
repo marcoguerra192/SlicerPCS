@@ -22,6 +22,9 @@ typedef struct point {  // Definizione del tipo di dato Punto
     double y; // coordinate
     double z;
     char side; // Vale '-' se sta sotto il piano, '+' se sta sopra il piano, '0' se entro la tolleranza dal piano
+
+    long indice; // indice numerico per la stampa senza indirizzi di memoria (utile per la lettura MATLAB)
+
 } Point;
 
 // Definizione LISTA di PUNTI
@@ -44,6 +47,9 @@ typedef struct seg {  // Definizione del tipo di dato Segmento
     Point* A;    // descritto da due puntatori a due punti
     Point* B;
     struct face_pointerlist_el* f; // Lista di facce che condividono quel segmento
+
+    long indice; // indice numerico per la stampa senza indirizzi di memoria (utile per la lettura MATLAB)
+
 } Seg;
 
 // Definizione LISTA di SEGMENTI
@@ -76,6 +82,8 @@ struct seg_pointerlist_el* s; // Lista di segmenti. L'ultimo elemento punta a NU
    unsigned long CausingPlane; // Marker che indica quale piano ha originato la faccia, ovvero su quale frattura il piano giace, da 1 a n.
                                // Altrimenti 0 per indicare che la faccia discende da una di quelle originali.
 
+   long indice; // indice numerico per la stampa senza indirizzi di memoria (utile per la lettura MATLAB)
+
 } Face;
 
 // Definizione LISTA di FACCE
@@ -96,6 +104,9 @@ dichiarare variabili di questo tipo, NON Face_List*, se no come prima c'è un pun
 typedef struct solid {  // Definizione del tipo di dato Solido
     struct face_pointerlist_el* f; // Lista di facce (definita più giù). L'ultimo elemento punta a NULL, per capire quando la lista finisce!
                         // Contiene già la di char che descrive l'orientamento del versore normale alla faccia: 'E' x esterno, 'I' x interno
+
+    long indice; // indice numerico per la stampa senza indirizzi di memoria (utile per la lettura MATLAB)
+
 } Solid;
 
 // Definizione LISTA di SOLIDI
@@ -115,6 +126,9 @@ dichiarare variabili di questo tipo, NON Solid_List*, se no come prima c'è un pu
 typedef struct plane { // tipo piano
     Point pt; // punto
     Point n; // vettore normale
+
+    long indice; // indice numerico per la stampa senza indirizzi di memoria (utile per la lettura MATLAB)
+
 } Plane;
 
 typedef struct plane_list_el { // membro della lista

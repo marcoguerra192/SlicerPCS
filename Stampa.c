@@ -248,6 +248,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             cursSolid=cursSolid->next;
             }
 
+
     fprintf(DEST,"\nFacce derivate dalle originali:\n");
     for (i=0 ; i < NUMFACCE_ORIG ; i++)
     {
