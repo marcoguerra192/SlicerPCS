@@ -534,6 +534,11 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
             return -1;
         }
 
+        if (MarkerFaccia > NUMFACCE_ORIG) // aggiorno il contatore delle facce originali per saperne il numero nel main
+        {
+            NUMFACCE_ORIG = MarkerFaccia;
+        }
+
         // assegno il marker letto alla faccia corrente
         f->F.OriginalFace = MarkerFaccia;
         // Fine assegnazione marker faccia originale
