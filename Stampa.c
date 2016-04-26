@@ -11,6 +11,8 @@ int stampa_punto(Point*, FILE*);
 int stampa_seg(Seg*, FILE*);
 int stampa_faccia(Face*, FILE*);
 int stampa_sol(Solid*, FILE*);
+void spaced_output(FILE*, long, long);
+long Max(long a, long b);
 
 int Stampa()
 {
@@ -383,6 +385,127 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
 
     }
 
+    void print_neat_with_indexes(char dest)
+    /* parametro: 0 per stampa su console, 1 su file
+       Stampa in modo HUMAN-READABLE */
+{
+    Point_List cursPoint;
+    Seg_List cursSeg;
+    Face_PointerList cursf;
+    Face_List cursface;
+    Solid_List cursSolid;
+    Seg_PointerList cursSegpointer;
+    Face_PointerList cursFacepointer;
+    int i = 0;
+
+    FILE* DEST;
+    if (dest == 0)
+    {
+        DEST = stdout;
+    }
+    else
+    {
+        DEST = fopen("Risultato.txt","w");
+    }
+
+    cursPoint = Pt;
+    fprintf(DEST,"** -------- Punti ( %ld ) ---------------------- ** \n", NUMPUNTI);
+    while(cursPoint!=NULL)
+    {
+            spaced_output(DEST, cursPoint->P.indice , NUMPUNTI);
+            fprintf(DEST, " - %f %f %f \n", cursPoint->P.x, cursPoint->P.y, cursPoint->P.z);
+            cursPoint=cursPoint->next;
+    }
+    cursSeg=Sg;
+    fprintf(DEST,"\n** -------- Segmenti ( %ld ) ------------------- ** \n", NUMSEG);
+    while(cursSeg!=NULL)
+    {
+            spaced_output(DEST, cursSeg->S.indice, NUMSEG);
+            fprintf(DEST," - ");
+            spaced_output(DEST, cursSeg->S.A->indice, NUMPUNTI);
+            fprintf(DEST," -> ");
+            spaced_output(DEST, cursSeg->S.B->indice, NUMPUNTI);
+            cursf=cursSeg->S.f;
+            fprintf(DEST," | Facce: ");
+            while(cursf!=NULL)
+            {
+                spaced_output(DEST, cursf->fptr->indice, NUMFACCE);
+                fprintf(DEST," ");
+                cursf=cursf->next;
+            }
+            fprintf(DEST,"\n");
+            cursSeg=cursSeg->next;
+    }
+    cursface=Fc;
+    fprintf(DEST,"\n** -------- Facce ( %ld ) --------------------- ** \n",NUMFACCE);
+    while(cursface!=NULL)
+    {
+            spaced_output(DEST,cursface->F.indice,NUMFACCE);
+            fprintf(DEST," sol1: ");
+            spaced_output(DEST,cursface->F.Sol1->indice, Max(NUMSOL,4000) ); // nel caso di (nil) uso 4 caratteri!
+            fprintf(DEST," sol2: ");
+            if (cursface->F.Sol2 != NULL)
+            {
+                spaced_output(DEST,cursface->F.Sol2->indice, Max(NUMSOL,4000)); // nel caso di (nil) uso 4 caratteri!
+            }
+            else
+            {
+                fprintf(DEST,"(nil)");
+            }
+            cursSegpointer=cursface->F.s;
+            fprintf(DEST,"segmenti: ");
+            while(cursSegpointer!=NULL){
+
+                fprintf(DEST,"%ld %c ", cursSegpointer->sptr->indice , cursSegpointer->orient );
+                cursSegpointer=cursSegpointer->next;
+            }
+            fprintf(DEST, "OriginalFace: %d - CuttingPlane: %ld ", cursface->F.OriginalFace, cursface->F.CausingPlane);
+            fprintf(DEST,"\n");
+            cursface=cursface->next;
+    }
+    fprintf(DEST,"\nSolidi\n");
+    cursSolid=Sol;
+    while(cursSolid!=NULL){
+            fprintf(DEST,"%ld ", cursSolid->So.indice );
+            cursFacepointer=cursSolid->So.f;
+            fprintf(DEST,"facce: ");
+            while(cursFacepointer!=NULL){
+                    fprintf(DEST,"%ld %c ",cursFacepointer->fptr->indice, cursFacepointer->orient);
+                    cursFacepointer=cursFacepointer->next;
+            }
+            fprintf(DEST,"\n");
+            cursSolid=cursSolid->next;
+            }
+
+
+    fprintf(DEST,"\nFacce derivate dalle originali:\n");
+    for (i=0 ; i < NUMFACCE_ORIG ; i++)
+    {
+        cursf = FigliOriginali[i];
+        fprintf(DEST, "Marker %d - Facce :",i+1);
+        while (cursf != NULL)
+        {
+            fprintf(DEST, " %ld" , cursf->fptr->indice);
+            cursf = cursf->next;
+        }
+        fprintf(DEST, "\n");
+    }
+
+    fprintf(DEST,"\nFacce generate dal piano k-esimo:\n");
+    for (i=0 ; i < NUMPIANI ; i++)
+    {
+        cursf = GeneratiFrattura[i];
+        fprintf(DEST, "Frattura %d - Facce :",i+1);
+        while (cursf != NULL)
+        {
+            fprintf(DEST, " %ld" , cursf->fptr->indice);
+            cursf = cursf->next;
+        }
+        fprintf(DEST, "\n");
+    }
+
+    }
+
     void controllo_errori(){
 
         Seg_List segCurs;
@@ -492,3 +615,43 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
         }
 
     }
+
+    int order_of_magnitude(int number)
+    /* Funzione per calcolare l'odg di un numero intero, ovvero di quanti digit ho bisogno per scriverlo
+       che è order of magnitude + 1 */
+    {
+        int ind = 0;
+        double num = abs( (double) number);
+
+        if (num < 10 ) // ritorna zero se è meno di uno!
+        {
+            return 0;
+        }
+        while ( num >= 10 )
+        {
+            num /= 10;
+            ind++;
+        }
+
+        return ind;
+    }
+
+    void spaced_output(FILE* file, long out, long limit)
+    {
+        int i;
+        fprintf(file,"%ld", out);
+        for ( i = order_of_magnitude(out) ; i < order_of_magnitude(limit) ; i++)
+        {
+            fprintf(file," ");
+        }
+    }
+
+    long Max(long a, long b)
+    {
+        if (a >= b)
+        {
+            return a;
+        }
+        return b;
+    }
+

@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 
     while (FcCurs != NULL)
     {
-        Face_List tmp; // segnaposto temporaneo per aggiunta in testa
+        Face_PointerList tmp; // segnaposto temporaneo per aggiunta in testa
         unsigned int OriFace = FcCurs->F.OriginalFace;
         unsigned long CausePl = FcCurs->F.CausingPlane;
 
@@ -330,7 +330,7 @@ int main(int argc, char** argv)
     {
         // new_print_all(1); //Invece che questa utilizziamo la funzione nuova che stampa gli indici.
         // in futuro lasciamo la scelta con un parametro a riga di comando ( potenzialmente implementare tutto come una function. )
-        print_all_with_indexes(1);
+        print_neat_with_indexes(1);
     }
 
 
