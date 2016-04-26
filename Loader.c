@@ -852,6 +852,9 @@ int genera_piani(n_piani)
         }
     }
 
+    fprintf(fp,"\n");
+    fprintf(fp,"!");
+
     fclose(fp);
     return 1;
 
