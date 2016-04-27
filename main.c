@@ -19,6 +19,7 @@ int main(int argc, char** argv)
     RANDOMIZE = 1; // default
     GRAPHIC = 1;
     PREPRINT = 0;
+    HUM_READ = 1;
 
     if (argc == 1) // nessun argomento
     {
@@ -86,7 +87,12 @@ int main(int argc, char** argv)
         {
             PREPRINT = 1;
         }
+        if (argv[3][2] == '0') // ATTIVA OUTPUT HUMAN-READABLE
+        {
+            HUM_READ = 0;
+        }
     }
+
 
     if (RANDOMIZE)
     {
@@ -328,9 +334,18 @@ int main(int argc, char** argv)
     }
     else
     {
-        // new_print_all(1); //Invece che questa utilizziamo la funzione nuova che stampa gli indici.
-        // in futuro lasciamo la scelta con un parametro a riga di comando ( potenzialmente implementare tutto come una function. )
-        print_neat_with_indexes(1);
+        // new_print_all(1);
+         //Invece che questa utilizziamo la funzione nuova che stampa gli indici.
+        // in futuro lasciamo la scelta con un parametro a riga di comando
+        if (HUM_READ)
+        {
+            print_neat_with_indexes(1);
+        }
+        else
+        {
+            print_all_with_indexes(1);
+        }
+
     }
 
 

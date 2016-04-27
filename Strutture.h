@@ -74,12 +74,16 @@ long NUMFACCE_ORIG;
 short RANDOMIZE;
 short GRAPHIC;
 short PREPRINT;
+short HUM_READ;
 
 
 // STRINGA HELP
-#define HELP "Sintassi: .\\Progetto.exe [<N di Piani>] [<Tolleranza>] [ab] \n> \
- \n  a = 1 : Stampa in formato grafico con MATLAB - a = 0 : Stampa in formato testo su file \n \
- \n  b = 1 : Stampa il solido prima del run - b = 0 : Stampa solo alla fine (Stampa secondo la modalita' a) \n"
+#define HELP "Sintassi: ./SlicerPCS [<N di Piani>] [<Tolleranza>] [abc] \n> \
+ \n   Porre <N di Piani> pari a zero per leggerli da file, o pari ad un intero positivo per generarne random quel numero. \n \
+  a = 1 : Stampa in formato grafico con MATLAB - a = 0 : Stampa in formato testo su file \n \
+  b = 1 : Stampa il solido prima del run - b = 0 : Stampa solo alla fine (Stampa secondo la modalita' a) \n \
+  c = 1 : Stampa in modalita' human-readable - c = 0 : Stampa in modalita' minimale (per gli script) \n \
+  Press Return... \n"
 
 // NOME FILE PER IL RISULTATO
 #define RESULT "Risultato.m"

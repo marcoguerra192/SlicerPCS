@@ -12,7 +12,8 @@ int stampa_seg(Seg*, FILE*);
 int stampa_faccia(Face*, FILE*);
 int stampa_sol(Solid*, FILE*);
 void spaced_output(FILE*, long, long);
-long Max(long a, long b);
+void spaced_output_char(FILE*, long, char, long);
+long Max(long, long);
 
 int Stampa()
 {
@@ -441,36 +442,41 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     while(cursface!=NULL)
     {
             spaced_output(DEST,cursface->F.indice,NUMFACCE);
-            fprintf(DEST," sol1: ");
-            spaced_output(DEST,cursface->F.Sol1->indice, Max(NUMSOL,4000) ); // nel caso di (nil) uso 4 caratteri!
-            fprintf(DEST," sol2: ");
+            fprintf(DEST," Sol1: ");
+            spaced_output(DEST,cursface->F.Sol1->indice, NUMSOL ); // nel caso di (nil) uso 4 caratteri!
+            fprintf(DEST," Sol2: ");
             if (cursface->F.Sol2 != NULL)
             {
-                spaced_output(DEST,cursface->F.Sol2->indice, Max(NUMSOL,4000)); // nel caso di (nil) uso 4 caratteri!
+                spaced_output(DEST,cursface->F.Sol2->indice, Max(NUMSOL,40000)); // nel caso di (nil) uso 4 caratteri!
             }
             else
             {
                 fprintf(DEST,"(nil)");
             }
             cursSegpointer=cursface->F.s;
-            fprintf(DEST,"segmenti: ");
-            while(cursSegpointer!=NULL){
-
-                fprintf(DEST,"%ld %c ", cursSegpointer->sptr->indice , cursSegpointer->orient );
+            fprintf(DEST," | Segmenti: ");
+            while(cursSegpointer!=NULL)
+            {
+                spaced_output_char(DEST, cursSegpointer->sptr->indice, cursSegpointer->orient, NUMSEG);
+                fprintf(DEST," ");
                 cursSegpointer=cursSegpointer->next;
             }
-            fprintf(DEST, "OriginalFace: %d - CuttingPlane: %ld ", cursface->F.OriginalFace, cursface->F.CausingPlane);
+            fprintf(DEST, "OriginalFace: ");
+            spaced_output(DEST, cursface->F.OriginalFace, NUMFACCE_ORIG);
+            fprintf(DEST, " - CuttingPlane: ");
+            spaced_output(DEST, cursface->F.CausingPlane, NUMPIANI);
             fprintf(DEST,"\n");
             cursface=cursface->next;
     }
-    fprintf(DEST,"\nSolidi\n");
+    fprintf(DEST,"\n** -------- Solidi ( %ld ) -------------------- ** \n",NUMSOL);
     cursSolid=Sol;
     while(cursSolid!=NULL){
-            fprintf(DEST,"%ld ", cursSolid->So.indice );
+            spaced_output(DEST, cursSolid->So.indice, NUMSOL);
+            fprintf(DEST," - Facce: ");
             cursFacepointer=cursSolid->So.f;
-            fprintf(DEST,"facce: ");
             while(cursFacepointer!=NULL){
-                    fprintf(DEST,"%ld %c ",cursFacepointer->fptr->indice, cursFacepointer->orient);
+                    spaced_output_char(DEST, cursFacepointer->fptr->indice,cursFacepointer->orient, NUMFACCE);
+                    fprintf(DEST," ");
                     cursFacepointer=cursFacepointer->next;
             }
             fprintf(DEST,"\n");
@@ -478,27 +484,34 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             }
 
 
-    fprintf(DEST,"\nFacce derivate dalle originali:\n");
+    fprintf(DEST,"\n** ---- Facce derivate dalle originali: ---- **\n");
     for (i=0 ; i < NUMFACCE_ORIG ; i++)
     {
         cursf = FigliOriginali[i];
-        fprintf(DEST, "Marker %d - Facce :",i+1);
+        fprintf(DEST, "Marker ");
+        spaced_output(DEST, (long) i+1 , NUMFACCE_ORIG);
+        fprintf(DEST," - Facce : ");
         while (cursf != NULL)
         {
-            fprintf(DEST, " %ld" , cursf->fptr->indice);
+            spaced_output(DEST, cursf->fptr->indice, NUMFACCE);
+            fprintf(DEST, " ");
             cursf = cursf->next;
         }
         fprintf(DEST, "\n");
     }
 
-    fprintf(DEST,"\nFacce generate dal piano k-esimo:\n");
+    fprintf(DEST,"\n** ---- Facce generate dalla frattura k-esima: ---- **\n");
     for (i=0 ; i < NUMPIANI ; i++)
     {
         cursf = GeneratiFrattura[i];
-        fprintf(DEST, "Frattura %d - Facce :",i+1);
+        fprintf(DEST, "Frattura ");
+        spaced_output(DEST, (long) i+1 , NUMPIANI);
+        fprintf(DEST, " - Facce : ");
+
         while (cursf != NULL)
         {
-            fprintf(DEST, " %ld" , cursf->fptr->indice);
+            spaced_output(DEST, cursf->fptr->indice, NUMFACCE);
+            fprintf(DEST, " " );
             cursf = cursf->next;
         }
         fprintf(DEST, "\n");
@@ -637,9 +650,21 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     }
 
     void spaced_output(FILE* file, long out, long limit)
+    /* Stampa un intero più degli spazi in modo da mantenere l'allineamento */
     {
         int i;
         fprintf(file,"%ld", out);
+        for ( i = order_of_magnitude(out) ; i < order_of_magnitude(limit) ; i++)
+        {
+            fprintf(file," ");
+        }
+    }
+
+    void spaced_output_char(FILE* file, long out, char ch, long limit)
+    /* Stessa cosa di quella sopra, ma serve per stampare il numero, un carattere (orient) e poi gli spazi */
+    {
+        int i;
+        fprintf(file,"%ld%c", out, ch);
         for ( i = order_of_magnitude(out) ; i < order_of_magnitude(limit) ; i++)
         {
             fprintf(file," ");
