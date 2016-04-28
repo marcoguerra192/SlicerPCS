@@ -302,14 +302,15 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     }
 
     cursPoint = Pt;
-    fprintf(DEST,"Punti\n");
+    // fprintf(DEST,"Punti\n");
     while(cursPoint!=NULL)
     {
-            fprintf(DEST,"%ld - %f %f %f \n", cursPoint->P.indice, cursPoint->P.x, cursPoint->P.y, cursPoint->P.z);
+            fprintf(DEST,"%ld %f %f %f \n", cursPoint->P.indice, cursPoint->P.x, cursPoint->P.y, cursPoint->P.z);
             cursPoint=cursPoint->next;
     }
     cursSeg=Sg;
-    fprintf(DEST,"\nSegmenti\n");
+    //fprintf(DEST,"\nSegmenti\n");
+    fprintf(DEST,"!\n");
     while(cursSeg!=NULL){
             fprintf(DEST,"%ld - %ld -> %ld ", cursSeg->S.indice, cursSeg->S.A->indice, cursSeg->S.B->indice);
             cursf=cursSeg->S.f;
