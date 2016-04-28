@@ -15,32 +15,32 @@
 
 // LISTA PRINCIPALE DI PUNTI
 
-Point_List Pt; /* Variabile di tipo Lista di Punti, cioè definita come puntatore ad un elemento della lista.
+extern Point_List Pt; /* Variabile di tipo Lista di Punti, cioè definita come puntatore ad un elemento della lista.
                   Contiene i campi: Pt->P che contiene una struttura punto (il punto corrente).
                                     Pt->next che punta al prossimo elemento della lista.  */
 
 // LISTA PRINCIPALE DI SEGMENTI
 
-Seg_List Sg; /* Variabile di tipo Lista di Segmenti, cioè definita come puntatore ad un elemento della lista.
+extern Seg_List Sg; /* Variabile di tipo Lista di Segmenti, cioè definita come puntatore ad un elemento della lista.
                 Contiene i campi: Sg->S che contiene una struttura segmento
                                   Sg->next che punta al prossimo elemento della lista.  */
 
 // LISTA PRINCIPALE DI FACCE
 
-Face_List Fc;  /* Variabile di tipo Lista di Facce, cioè definita come puntatore ad un elemento della lista.
+extern Face_List Fc;  /* Variabile di tipo Lista di Facce, cioè definita come puntatore ad un elemento della lista.
                   Contiene i campi: Fc->F che contiene una struttura faccia
                                     Fc->next che punta al prossimo elemento della lista.  */
 
 // LISTA PRINCIPALE DI SOLIDI
 
-Solid_List Sol; /* Variabile di tipo Lista di Solidi, cioè definita come puntatore ad un elemento della lista.
+extern Solid_List Sol; /* Variabile di tipo Lista di Solidi, cioè definita come puntatore ad un elemento della lista.
                    Contiene i campi: Sol->So che contiene una struttura solido
                                      Sol->next che punta al prossimo elemento della lista.  */
 
-Plane_List Pl; // Lista di piani
+extern Plane_List Pl; // Lista di piani
 
 
-double tol; // double per l'asegnazione della TOLLERANZA.
+extern double tol; // double per l'asegnazione della TOLLERANZA.
 
 
 //    DEFINISCO LO STREAM DI OUTPUT!
@@ -48,12 +48,12 @@ double tol; // double per l'asegnazione della TOLLERANZA.
 
 
 // Contatori dei pt, seg, facce, sol e facce originali
-long NUMPUNTI;
-long NUMSEG;
-long NUMFACCE;
-long NUMSOL;
-long NUMPIANI;
-long NUMFACCE_ORIG;
+extern long NUMPUNTI;
+extern long NUMSEG;
+extern long NUMFACCE;
+extern long NUMSOL;
+extern long NUMPIANI;
+extern long NUMFACCE_ORIG;
 
 // Comandi shell per la stampa del risultato su MATLAB/Octave
 
@@ -71,10 +71,10 @@ long NUMFACCE_ORIG;
 
 // OPZIONI varie per la generazione di piani random/fissa da file, stampa in modalità grafica/testuale, stampa del solido prima del run
 
-short RANDOMIZE;
-short GRAPHIC;
-short PREPRINT;
-short HUM_READ;
+extern short RANDOMIZE;
+extern short GRAPHIC;
+extern short PREPRINT;
+extern short HUM_READ;
 
 
 // STRINGA HELP
@@ -91,9 +91,9 @@ short HUM_READ;
 
 // STRUTTURE DATI PER IL RETRO LINK FRA FACCE ORIGINALI E FACCE FINALI, E FRA FRATTURE E FACCE FINALI
 
-Face_PointerList* FigliOriginali ; // vettore di Face_PointerList, k-esimo elemento è la lista di facce discendenti dalla faccia originale k.
+extern Face_PointerList* FigliOriginali ; // vettore di Face_PointerList, k-esimo elemento è la lista di facce discendenti dalla faccia originale k.
 
-Face_PointerList* GeneratiFrattura ; // vettore di Face_PointerList, k-esimo elemento è la lista facce generate dal k-esimo piano.
+extern Face_PointerList* GeneratiFrattura ; // vettore di Face_PointerList, k-esimo elemento è la lista facce generate dal k-esimo piano.
 
 
 #endif // STRUTTURE_H_INCLUDED

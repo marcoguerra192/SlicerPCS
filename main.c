@@ -3,8 +3,31 @@
 
 #include "All.h"
 
+ //definizione delle extern
+    Point_List Pt;
+    Seg_List Sg;
+    Face_List Fc;
+    Solid_List Sol;
+    Plane_List Pl;
+    double tol;
+    long NUMPUNTI;
+    long NUMSEG;
+    long NUMFACCE;
+    long NUMSOL;
+    long NUMPIANI;
+    long NUMFACCE_ORIG;
+    short RANDOMIZE;
+    short GRAPHIC;
+    short PREPRINT;
+    short HUM_READ;
+    Face_PointerList* FigliOriginali;
+    Face_PointerList* GeneratiFrattura;
+    // fine definizione delle extern
+
 int main(int argc, char** argv)
 {
+
+
     Point_List PtCurs; // cursori vari
     Seg_List SgCurs;
     Plane_List PlCurs;
