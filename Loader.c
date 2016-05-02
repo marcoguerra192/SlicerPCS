@@ -313,23 +313,27 @@ Point* fetch_point(int n)
 
 int load_faces(char* filename)
 /* Nella nuova implementazione la sintassi del file delle facce dev'essere la seguente:
-Una riga composta da <numero><+/->< spazio> ripetuto per ogni segmento della faccia, fino all'ultimo nella forma <numero><+/-><!>
-Quindi a capo (\n o \r).
-Poi una riga con un solo numero, indicante il marker della faccia. I MARKER NON POSSONO PARTIRE DA 0, MA DEVONO PARTIRE DA 1
-Ripetere per ogni faccia.
-Infine una riga con un solo punto esclamativo.
+Una prima riga contenente il numero di righe seguenti ( => numero di facce originali )
+Tot righe composte da numero di segmenti, [+/-]indice_segmento ripetuto per ogni segmento della faccia, quindi il marker.Quindi a capo.
+Nella forma
+## forma
+NUMFACCE_ORIG
+numseg s1 s2 -s3 s4 s4 mkr
+## esempio
+2
+4 2 -5 12 6 1
+6 -1 5 4 7 -11 3 2
 Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento */
 {
     FILE* loader_stream;   // Dichiara il file stream
 	Face_List f;           // Cursore per scorrere sulla lista di facce
 	Seg_PointerList SegCurs;
 	Face_PointerList tmpFace;
-	int tmpnum = 0;
-	char ch, ori;
+	int tmpnum = 0, nSeg = 0;
 	char* line = (char*) malloc(200*sizeof(char)); // riga del file
 	FILE* line_stream; // stream per scorrere la riga
 	Point vett1, vett2, norm; // vettori per calcolare la normale
-	int i = 0;
+	int i = 0, j = 0;
 
     NUMFACCE = 0;
     NUMFACCE_ORIG = 0;
@@ -371,182 +375,82 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 
     f = Fc; //assegno la testa lista al cursore temporaneo
 
-    f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
-    SegCurs = f->F.s; // assegno il cursore
-
     fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
-    if ( line[0] == '!' || line[0]=='\r' || line[0]=='\n' || line[0]=='\0') // file vuoto
-    {
-        #ifdef DEBUG_H
-        fprintf(OUTPUT, "Load_Faces: Il file non contiene facce");
-        #endif
-        return -1;
-    }
-
     line_stream = fmemopen(line, strlen(line),"r"); // converti la stringa letta in un buffer
 
-    fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch);
-    SegCurs->sptr = fetch_seg(tmpnum);
-    SegCurs->orient = ori;
-    SegCurs->next = NULL;
-
-    while (( ch != '!' && fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia FUORI
+    if (fscanf(line_stream,"%ld", &NUMFACCE_ORIG) != 1)
     {
-        SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
-        SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
-        SegCurs->next->orient = ori; // copio l'orientamento
-        SegCurs->next->next = NULL; //termino lista
-        SegCurs = SegCurs->next;
+        fprintf(OUTPUT, "Loader.c Load_Faces: ERRORE, il numero di facce originali non e' stato letto correttamente! \n");
+        return -1;
     }
-
-    // Ora dalla riga successiva leggo IL MARKER DELLA FACCIA!
-
-    fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
-
-    MarkerFaccia = atoi(line);
-    if (MarkerFaccia == 0)
+    if ( NUMFACCE_ORIG == 0)
     {
-        #ifdef DEBUG_H
-        fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
-        #endif
+        fprintf(OUTPUT, "Loader.c Load_Faces: ERRORE, il numero di facce originali non puo' essere zero! \n");
         return -1;
     }
 
-    if (MarkerFaccia > NUMFACCE_ORIG) // aggiorno il contatore delle facce originali per saperne il numero nel main
+    MarkerOriginali = (long*) malloc(NUMFACCE_ORIG*sizeof(long)); // alloco il vettore dei marker
+
+    for ( i = 0 ; i < NUMFACCE_ORIG ; i++) // ciclo su tutte le RIGHE
     {
-        NUMFACCE_ORIG = MarkerFaccia;
-    }
-
-    // assegno il marker letto alla faccia corrente
-    f->F.OriginalFace = MarkerFaccia;
-    // Fine assegnazione marker faccia originale
-
-    // Tutte le facce originali sono generate (formalmente) dal piano 0, dunque assegno marker CausingPlane 0
-    f->F.CausingPlane = (unsigned long) 0;
-    // Fine assegnazione marker piano generatore
-
-
-    // adesso calcoliamo la normale
-
-    vett1.x = f->F.s->sptr->B->x - f->F.s->sptr->A->x; // creo un primo vettore
-    vett1.y = f->F.s->sptr->B->y - f->F.s->sptr->A->y;
-    vett1.z = f->F.s->sptr->B->z - f->F.s->sptr->A->z;
-
-    if (f->F.s->orient == '-')
-    {
-        vett1.x *= -1;
-        vett1.y *= -1;
-        vett1.z *= -1;
-    }
-
-    vett2.x = f->F.s->next->sptr->B->x - f->F.s->next->sptr->A->x; // creo il secondo vettore
-    vett2.y = f->F.s->next->sptr->B->y - f->F.s->next->sptr->A->y;
-    vett2.z = f->F.s->next->sptr->B->z - f->F.s->next->sptr->A->z;
-
-    if (f->F.s->next->orient=='-')
-    {
-        vett2.x *= -1;
-        vett2.y *= -1;
-        vett2.z *= -1;
-    }
-
-
-    norm = cross_prod(vett1,vett2); // calcolo il prodotto vettore
-    norm = vett_scal(norm,1/eu_norm(norm)); // e normalizzo
-    f->F.norm_vect.x = norm.x; // copio il vettore normale
-    f->F.norm_vect.y = norm.y;
-    f->F.norm_vect.z = norm.z;
-    f->next = NULL;
-
-    // ora salviamo la faccia nuova nei suoi segmenti
-    SegCurs = f->F.s;
-    while (SegCurs != NULL)
-        {
-            if (SegCurs->sptr->f == NULL) // se è la prima faccia che gli inserisci
-        {
-            SegCurs->sptr->f = (Face_PointerList) malloc(sizeof(Face_PointerList_El)); // alloco
-            SegCurs->sptr->f->fptr = &(f->F); // salvo l'indirizzo della faccia
-            SegCurs->sptr->f->next = NULL;
-        }
-        else // se invece ci avevi già scritto aggiungi in testa
-        {
-            tmpFace = SegCurs->sptr->f;
-            SegCurs->sptr->f = (Face_PointerList) malloc(sizeof(Face_PointerList_El)); // alloco
-            SegCurs->sptr->f->fptr = &(f->F);
-            SegCurs->sptr->f->next = tmpFace;
-        }
-
-        SegCurs = SegCurs->next; // scorri avanti al segmento successivo
-    }
-    // fine del salvataggio delle facce nei segmenti
-
-    NUMFACCE++;
-     // ora ciclo dentro al while per le righe dalla seconda in poi
-     f=Fc;
-
-     while (!feof(loader_stream))
-     {
-        /* Qui dentro scriviamo le stesse istruzioni ma allocando i nuovi elementi della lista*/
-
         fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
+        line_stream = fmemopen(line, strlen(line),"r"); // converti la stringa letta in un buffer
+        fscanf(line_stream, "%d", &nSeg); // il primo elemento della riga è il numero di segmenti che seguono
 
-
-        if (line[0]=='!' || line[0]=='\n' || line[0]=='\r' || line[0]=='\0') // se la riga è vuota
+        if (i == 0)
         {
-            #ifdef DEBUG_H
-            fprintf(OUTPUT, "Load_Faces: Riga vuota, uscita. \n");
-            #endif
-            return 0;
+            f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
+            SegCurs = f->F.s; // assegno il cursore
+        }
+        else
+        {
+            f->next = (Face_List) malloc(sizeof(Face_List_El));
+            f = f->next;
+            f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
+            SegCurs = f->F.s;
         }
 
-        line_stream = fmemopen(line, strlen(line),"r"); // converti la stringa in un buffer
 
-        fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch);
-
-        f->next=(Face_List)malloc(sizeof(Face_List_El));
-        f=f->next;
-        f->F.s = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));;
-        SegCurs = f->F.s;
-
-
-        SegCurs->sptr = fetch_seg(tmpnum);
-        SegCurs->orient = ori;
-        SegCurs->next = NULL;
-
-        while ((ch != '!' && fscanf(line_stream,"%d%c%c",&tmpnum, &ori, &ch) == 3)) // ciclo (orizzontale) sui SEGMENTI della prima faccia DENTRO
+        for (j = 0 ; j < nSeg ; j++ ) // scorro sui segmenti
         {
-            SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
-            SegCurs->next->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
-            SegCurs->next->orient = ori; // copio l'orientamento
-            SegCurs->next->next = NULL; //termino lista
-            SegCurs = SegCurs->next;
-        }
+            fscanf(line_stream, "%d" , &tmpnum);
+            if (j == 0)
+            {
+                SegCurs->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
+                if (tmpnum < 0)
+                {
+                    SegCurs->orient = '-'; // copio l'orientamento
+                }
+                else
+                {
+                    SegCurs->orient = '+'; // copio l'orientamento
+                }
+            }
+            else
+            {
+                SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
+                SegCurs = SegCurs->next;
+                SegCurs->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
+                if (tmpnum < 0)
+                {
+                    SegCurs->orient = '-'; // copio l'orientamento
+                }
+                else
+                {
+                    SegCurs->orient = '+'; // copio l'orientamento
+                }
+            }
 
-        // Ora dalla riga successiva leggo IL MARKER DELLA FACCIA!
+        } // fine lettura elenco segmenti
+        SegCurs->next = NULL; //segna fine lista segmenti
 
-        fgets(line, 199, loader_stream); // leggi una riga dal file fino all'a capo
-
-        MarkerFaccia = atoi(line);
-        if (MarkerFaccia == 0)
-        {
-            #ifdef DEBUG_H
-            fprintf(OUTPUT, "Load_Faces: Impossibile leggere il marker della faccia! Uscita \n");
-            #endif
-            return -1;
-        }
-
-        if (MarkerFaccia > NUMFACCE_ORIG) // aggiorno il contatore delle facce originali per saperne il numero nel main
-        {
-            NUMFACCE_ORIG = MarkerFaccia;
-        }
-
+        fscanf(line_stream,"%d",&MarkerFaccia); // leggo il marker
+        MarkerOriginali[i] = MarkerFaccia;
         // assegno il marker letto alla faccia corrente
         f->F.OriginalFace = MarkerFaccia;
-        // Fine assegnazione marker faccia originale
 
         // Tutte le facce originali sono generate (formalmente) dal piano 0, dunque assegno marker CausingPlane 0
         f->F.CausingPlane = (unsigned long) 0;
-        // Fine assegnazione marker piano generatore
 
         // adesso calcoliamo la normale
 
@@ -554,7 +458,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         vett1.y = f->F.s->sptr->B->y - f->F.s->sptr->A->y;
         vett1.z = f->F.s->sptr->B->z - f->F.s->sptr->A->z;
 
-        if (f->F.s->orient == '-') // se era al contrario lo giro
+        if (f->F.s->orient == '-')
         {
             vett1.x *= -1;
             vett1.y *= -1;
@@ -565,7 +469,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         vett2.y = f->F.s->next->sptr->B->y - f->F.s->next->sptr->A->y;
         vett2.z = f->F.s->next->sptr->B->z - f->F.s->next->sptr->A->z;
 
-        if (f->F.s->next->orient == '-') // se era al contrario lo giro
+        if (f->F.s->next->orient=='-')
         {
             vett2.x *= -1;
             vett2.y *= -1;
@@ -582,7 +486,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         // ora salviamo la faccia nuova nei suoi segmenti
         SegCurs = f->F.s;
         while (SegCurs != NULL)
-            {
+        {
                 if (SegCurs->sptr->f == NULL) // se è la prima faccia che gli inserisci
             {
                 SegCurs->sptr->f = (Face_PointerList) malloc(sizeof(Face_PointerList_El)); // alloco
@@ -598,18 +502,15 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
             }
 
             SegCurs = SegCurs->next; // scorri avanti al segmento successivo
-        }
+        } // fine del salvataggio delle facce nei segmenti
+
 
         NUMFACCE++;
-     }
+    } // ciclo sulle RIGHE
 
-     // GENERIAMO IL VETTORE DEI MARKER IN MODO CONSECUTIVO
-     // SOLO DI PROVA, E' DA MODIFICARE!!!
-     MarkerOriginali = (long*) malloc(NUMFACCE_ORIG * sizeof(long));
-     for (i=0 ; i<NUMFACCE_ORIG ; i++)
-     {
-        MarkerOriginali[i] = i;
-     }
+    f->next = NULL;
+
+// ------------------------------------ copia vecchia -----------------------------------
 
     return 0;
 }
