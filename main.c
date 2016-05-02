@@ -21,6 +21,7 @@
     short PREPRINT;
     short HUM_READ;
     Face_PointerList* FigliOriginali;
+    long* MarkerOriginali;
     Face_PointerList* GeneratiFrattura;
     // fine definizione delle extern
 

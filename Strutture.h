@@ -93,6 +93,9 @@ extern short HUM_READ;
 
 extern Face_PointerList* FigliOriginali ; // vettore di Face_PointerList, k-esimo elemento è la lista di facce discendenti dalla faccia originale k.
 
+extern long* MarkerOriginali; // Vettore per associare un marker ad ogni faccia originale
+/* Inseriamo ad inizio file una riga contenente il NUMERO DI FACCE ORIGINALI. Così possiamo preallocare il vettore in modo efficiente. */
+
 extern Face_PointerList* GeneratiFrattura ; // vettore di Face_PointerList, k-esimo elemento è la lista facce generate dal k-esimo piano.
 
 

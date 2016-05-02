@@ -329,6 +329,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
 	char* line = (char*) malloc(200*sizeof(char)); // riga del file
 	FILE* line_stream; // stream per scorrere la riga
 	Point vett1, vett2, norm; // vettori per calcolare la normale
+	int i = 0;
 
     NUMFACCE = 0;
     NUMFACCE_ORIG = 0;
@@ -600,6 +601,14 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
         }
 
         NUMFACCE++;
+     }
+
+     // GENERIAMO IL VETTORE DEI MARKER IN MODO CONSECUTIVO
+     // SOLO DI PROVA, E' DA MODIFICARE!!!
+     MarkerOriginali = (long*) malloc(NUMFACCE_ORIG * sizeof(long));
+     for (i=0 ; i<NUMFACCE_ORIG ; i++)
+     {
+        MarkerOriginali[i] = i;
      }
 
     return 0;
