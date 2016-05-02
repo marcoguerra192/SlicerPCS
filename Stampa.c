@@ -549,7 +549,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     {
         cursf = FigliOriginali[i];
         fprintf(DEST, "Marker ");
-        spaced_output(DEST, (long) i+1 , NUMFACCE_ORIG);
+        spaced_output(DEST, (long) MarkerOriginali[i] , NUMFACCE_ORIG);
         fprintf(DEST," - Facce : ");
         while (cursf != NULL)
         {
@@ -565,7 +565,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     {
         cursf = GeneratiFrattura[i];
         fprintf(DEST, "Frattura ");
-        spaced_output(DEST, (long) i+1 , NUMPIANI);
+        spaced_output(DEST, (long) NUMFACCE_ORIG+i+1 , NUMFACCE_ORIG+NUMPIANI);
         fprintf(DEST, " - Facce : ");
 
         while (cursf != NULL)

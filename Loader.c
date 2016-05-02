@@ -416,7 +416,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
             fscanf(line_stream, "%d" , &tmpnum);
             if (j == 0)
             {
-                SegCurs->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
+                SegCurs->sptr = fetch_seg(abs(tmpnum)); // copio il puntatore al segmento
                 if (tmpnum < 0)
                 {
                     SegCurs->orient = '-'; // copio l'orientamento
@@ -430,7 +430,7 @@ Deve gestire anche l'ordinamento dei segmenti e la lista facce di ogni segmento 
             {
                 SegCurs->next = (Seg_PointerList) malloc (sizeof(Seg_PointerList_El));
                 SegCurs = SegCurs->next;
-                SegCurs->sptr = fetch_seg(tmpnum); // copio il puntatore al segmento
+                SegCurs->sptr = fetch_seg(abs(tmpnum)); // copio il puntatore al segmento
                 if (tmpnum < 0)
                 {
                     SegCurs->orient = '-'; // copio l'orientamento
