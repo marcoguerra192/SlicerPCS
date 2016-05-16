@@ -528,7 +528,15 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             fprintf(DEST, "OriginalFace: ");
             spaced_output(DEST, cursface->F.OriginalFace, MaxMarker);
             fprintf(DEST, " - CuttingPlane: ");
-            spaced_output(DEST, cursface->F.CausingPlane, NUMPIANI);
+            if (cursface->F.CausingPlane != 0)
+            {
+                spaced_output(DEST, cursface->F.CausingPlane + 1+NUMFACCE_ORIG, NUMPIANI+NUMFACCE_ORIG);
+            }
+            else // se la faccia è originale scrivi zero
+            {
+                spaced_output(DEST, (long) 0, NUMPIANI+NUMFACCE_ORIG);
+            }
+
             fprintf(DEST,"\n");
             cursface=cursface->next;
     }
