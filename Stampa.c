@@ -14,6 +14,7 @@ int stampa_sol(Solid*, FILE*);
 void spaced_output(FILE*, long, long);
 void spaced_output_char(FILE*, long, char, long);
 long Max(long, long);
+long find_max( long* , long );
 
 int Stampa()
 {
@@ -458,6 +459,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     Seg_PointerList cursSegpointer;
     Face_PointerList cursFacepointer;
     int i = 0;
+    long MaxMarker = 0;
 
     FILE* DEST;
     if (dest == 0)
@@ -468,6 +470,8 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     {
         DEST = fopen("Risultato.txt","w");
     }
+
+    MaxMarker = find_max(MarkerOriginali , NUMFACCE_ORIG); // calcolo il marker più alto (per allineare l'output)
 
     cursPoint = Pt;
     fprintf(DEST,"** -------- Punti ( %ld ) ---------------------- ** \n", NUMPUNTI);
@@ -522,7 +526,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
                 cursSegpointer=cursSegpointer->next;
             }
             fprintf(DEST, "OriginalFace: ");
-            spaced_output(DEST, cursface->F.OriginalFace, NUMFACCE_ORIG);
+            spaced_output(DEST, cursface->F.OriginalFace, MaxMarker);
             fprintf(DEST, " - CuttingPlane: ");
             spaced_output(DEST, cursface->F.CausingPlane, NUMPIANI);
             fprintf(DEST,"\n");
@@ -549,7 +553,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
     {
         cursf = FigliOriginali[i];
         fprintf(DEST, "Marker ");
-        spaced_output(DEST, (long) MarkerOriginali[i] , NUMFACCE_ORIG);
+        spaced_output(DEST, (long) MarkerOriginali[i] , MaxMarker);
         fprintf(DEST," - Facce : ");
         while (cursf != NULL)
         {
@@ -740,3 +744,17 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
         return b;
     }
 
+long find_max( long* vett, long n )
+/* Cerca il max su un vettore di n elementi long, tutti positivi */
+{
+    int i = 0;
+    long M = -1;
+    for (i = 0 ; i < n ; i++)
+    {
+        if (vett[i] > M)
+        {
+            M = vett[i];
+        }
+    }
+    return M;
+}
