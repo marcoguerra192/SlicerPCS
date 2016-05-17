@@ -367,7 +367,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
                 cursSegpointer=cursSegpointer->next;
             } // fine elenco segmenti della faccia
 
-            fprintf(DEST, "%d %ld\n", cursface->F.OriginalFace, cursface->F.CausingPlane);
+            fprintf(DEST, "%d %ld\n", cursface->F.OriginalFace, cursface->F.CausingPlane + NUMFACCE_ORIG);
             cursface=cursface->next;
     }
     // SOLIDI
@@ -530,7 +530,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             fprintf(DEST, " - CuttingPlane: ");
             if (cursface->F.CausingPlane != 0)
             {
-                spaced_output(DEST, cursface->F.CausingPlane + 1+NUMFACCE_ORIG, NUMPIANI+NUMFACCE_ORIG);
+                spaced_output(DEST, cursface->F.CausingPlane + NUMFACCE_ORIG, NUMPIANI+NUMFACCE_ORIG);
             }
             else // se la faccia è originale scrivi zero
             {
@@ -556,7 +556,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
             }
 
 
-    fprintf(DEST,"\n** ---- Facce derivate dalle originali: ---- **\n");
+    fprintf(DEST,"\n** ---- Facce derivate dalle originali ( %ld ) : ---- **\n",NUMFACCE_ORIG);
     for (i=0 ; i < NUMFACCE_ORIG ; i++)
     {
         cursf = FigliOriginali[i];
@@ -572,7 +572,7 @@ void new_print_all(char dest) // parametro: 0 per stampa su console, 1 su file
         fprintf(DEST, "\n");
     }
 
-    fprintf(DEST,"\n** ---- Facce generate dalla frattura k-esima: ---- **\n");
+    fprintf(DEST,"\n** ---- Facce generate dalla frattura k-esima ( %ld ) : ---- **\n",NUMPIANI);
     for (i=0 ; i < NUMPIANI ; i++)
     {
         cursf = GeneratiFrattura[i];

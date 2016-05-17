@@ -258,20 +258,32 @@ int main(int argc, char** argv)
     while (FcCurs != NULL)
     {
         Face_PointerList tmp; // segnaposto temporaneo per aggiunta in testa
-        unsigned int OriFace = FcCurs->F.OriginalFace;
-        unsigned long CausePl = FcCurs->F.CausingPlane;
+        unsigned int OriFace = FcCurs->F.OriginalFace; // OriFace contiene il MARKER, NON L'INDICE della faccia originale
+        unsigned long CausePl = FcCurs->F.CausingPlane; // contiene il marker della frattura, shiftato avanti di NUMFACCE_ORIG
 
         if (OriFace != 0) // se è una faccia originale aggiungo in testa alla lista del k-esimo elemento
         {
-            tmp = FigliOriginali[OriFace - 1];
-            FigliOriginali[OriFace - 1] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
-            FigliOriginali[OriFace - 1]->fptr = &(FcCurs->F);
-            FigliOriginali[OriFace - 1]->next = tmp;
+            // devo usare il vettore dei marker "al contrario" per risalire alla posizione corrispondente nel vettore facce originali
+            int ind = 0;
+            for (ind = 0 ; ind < NUMFACCE_ORIG ; ind++)
+            {
+                if (MarkerOriginali[ind] == OriFace)
+                {
+                    OriFace = ind;
+                    break;
+                }
+            } // ora OriFace contiene la posizione corretta nel vettore delle facce originali
+            tmp = FigliOriginali[OriFace];
+            FigliOriginali[OriFace] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
+            FigliOriginali[OriFace]->fptr = &(FcCurs->F);
+            FigliOriginali[OriFace]->next = tmp;
         }
 
         if (CausePl != 0) // se è provocato da una frattura aggiungo in testa alla lista del k-esimo piano
         {
-            tmp = GeneratiFrattura[CausePl-1];
+            // shifto indietro il marker della frattura per allinearlo con il vettore GeneratiFrattura
+            CausePl = CausePl - NUMFACCE_ORIG; // ora questo è l'indice corretto
+            tmp = GeneratiFrattura[CausePl-1]; // -1 perchè questi partono da 1
             GeneratiFrattura[CausePl-1] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
             GeneratiFrattura[CausePl-1]->fptr = &(FcCurs->F);
             GeneratiFrattura[CausePl-1]->next = tmp;
