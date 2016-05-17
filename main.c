@@ -259,7 +259,7 @@ int main(int argc, char** argv)
     {
         Face_PointerList tmp; // segnaposto temporaneo per aggiunta in testa
         unsigned int OriFace = FcCurs->F.OriginalFace; // OriFace contiene il MARKER, NON L'INDICE della faccia originale
-        unsigned long CausePl = FcCurs->F.CausingPlane; // contiene il marker della frattura, shiftato avanti di NUMFACCE_ORIG
+        unsigned long CausePl = FcCurs->F.CausingPlane; // contiene il marker della frattura, NON SHIFTATO (parte da 1)
 
         if (OriFace != 0) // se è una faccia originale aggiungo in testa alla lista del k-esimo elemento
         {
@@ -281,8 +281,7 @@ int main(int argc, char** argv)
 
         if (CausePl != 0) // se è provocato da una frattura aggiungo in testa alla lista del k-esimo piano
         {
-            // shifto indietro il marker della frattura per allinearlo con il vettore GeneratiFrattura
-            CausePl = CausePl - NUMFACCE_ORIG; // ora questo è l'indice corretto
+            // marker non shiftato rispetto a numfacce originali, ma da spostare indietro di 1
             tmp = GeneratiFrattura[CausePl-1]; // -1 perchè questi partono da 1
             GeneratiFrattura[CausePl-1] = (Face_PointerList) malloc(sizeof(Face_PointerList_El));
             GeneratiFrattura[CausePl-1]->fptr = &(FcCurs->F);
